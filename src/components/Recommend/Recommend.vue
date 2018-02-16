@@ -24,7 +24,7 @@
 <script>
 import { getRecommend } from '../../common/api/recommmend'
 // import { getPCrecommend } from '../../common/api/PCrecommend'
-import { Swiper, SwiperItem } from 'vux'
+import { Swiper } from 'vux'
 import scroll from '@/base/scroll/scroll'
 import loading from '@/base/loading/loading'
 import {playlistMixin} from '../../common/js/mixin'
@@ -52,7 +52,6 @@ export default {
   },
   components: {
     Swiper,
-    SwiperItem,
     scroll,
     loading
   },
@@ -69,7 +68,7 @@ export default {
     },
     jump (song) {
       let url = `https://y.qq.com/w/taoge.html?ADTAG=myqq&from=myqq&channel=10007100&id=${song.id}`
-      window.open(url)
+      window.open(url, '_blank')
     }
   }
   // mounted () {

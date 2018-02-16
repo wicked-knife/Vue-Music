@@ -56,9 +56,7 @@ export default {
       this.$router.back()
     },
     selectPlay (song, index) {
-      if (index !== 0) {
-        this.insertSong(song)
-      }
+      this.insertSong(song)
     },
     randomPlayALL () {
       switch (this.currentIndex) {
