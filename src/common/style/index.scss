@@ -1,0 +1,7 @@
+@import './tool.scss';
+@import './variable.scss';
+@import './reset.scss';
+
+body,html{
+  background-color: $color-background
+}
