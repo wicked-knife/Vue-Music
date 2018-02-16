@@ -95,7 +95,7 @@ export default {
 <style lang="scss" scoped>
 @import "../../common/style/index.scss";
 #user-center {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
