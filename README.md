@@ -6,8 +6,11 @@
 1.需求分析 → 2.设计图分析 → 3.模块化构思 → 4. 项目目录规划 → 5.静态资源准备 → 6.编码   
 
 ## 在线预览
-移动端体验更佳
-![](http://i2.bvimg.com/632724/23d8ae5b27822f67.png)
+[项目演示地址](https://ghostratel.github.io/portfolio/Music/index.html#/recommend)      
+
+移动端体验更佳     
+
+![二维码](http://i2.bvimg.com/632724/23d8ae5b27822f67.png)
 
 ### 用户界面
 * 歌单推荐页
@@ -37,7 +40,7 @@
 ![](http://i2.bvimg.com/632724/52603b6f87991740.png)
 
 ### 开始
-
+#### 开发环境
 ``` bash
 # install dependencies
 npm install
