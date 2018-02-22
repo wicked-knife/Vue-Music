@@ -53,7 +53,10 @@ export default {
       }
     },
     back () {
-      this.$router.back()
+      // 优化动画
+      this.$nextTick(() => {
+        this.$router.back()
+      })
     },
     selectPlay (song, index) {
       this.insertSong(song)
