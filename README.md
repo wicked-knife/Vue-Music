@@ -10,7 +10,7 @@
 
 移动端体验更佳     
 
-![二维码](http://i4.bvimg.com/632724/b3bf4fbb735667d6.png)
+![二维码](https://ws1.sinaimg.cn/large/e3507465gy1fouvagbgf0j207s07s742.jpg)
 
 ### 用户界面
 * 歌单推荐页
@@ -37,7 +37,7 @@
 * [x] ESlint
 
 ### 项目目录
-![](http://i2.bvimg.com/632724/52603b6f87991740.png)
+![](https://ws1.sinaimg.cn/large/e3507465gy1fouve3seowj20ga09qgm6.jpg)
 
 ### 开始
 #### 开发环境
