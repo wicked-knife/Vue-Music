@@ -2,15 +2,33 @@
   <div id='player' v-if='playlist.length > 0'>
     <transition name='normal'>
       <div id="normal-player" v-show='fullScreen'>
-        <h3 id='song-name' v-html='currentSong.name'></h3>
+        <h3 id='song-name' v-html='currentSong.name' @click='test'></h3>
         <h2 id='singer-name' v-html='currentSong.singer'></h2>
         <img :src="currentSong.image" id='bg-blur'>
         <i class='iconfont icon-unfold' @click.stop='minimize'></i>
-        <div id='rotate-hook'>
-          <div id="image-warpper" :class='{"play":true, "stop": !playingState}'>
-            <img :src="currentSong.image" id='song-image'>
-          </div>
+        <div id='rotate-hook' v-show="cdShow" @click="toggleShow">
+          <transition name='fade' mode="out-in">
+            <div id='for-transition' v-show="cdShow">
+              <div id="image-warpper" :class='{"play":true, "stop": !playingState}'>
+                <img :src="currentSong.image" id='song-image'>
+              </div>
+              <p id="mini-lyric">{{currentLyric}}</p>
+            </div>
+          </transition>
         </div>
+        <div id='lyric-container' v-if='lyric.lines' v-show="!cdShow" @click="toggleShow">
+          <transition name='fade'>
+            <div id='lyric-scroll-warpper' v-show="!cdShow">
+              <scroll :data="lyric.lines" ref='lyric-scroll'>
+                <div id="lyric-inner">
+                  <p v-for="(line, index) in lyric.lines" :key='index' :class="{'active': index === currentLine}" class='lyric-line' ref='lyric-line'>{{line.txt}}
+                  </p>
+                </div>
+              </scroll>
+            </div>
+          </transition>
+        </div>
+
         <div id="progress-bar-warpper">
           <progress-bar v-if='currentSong.duration' :currentTime='currentTime' :totalTime='currentSong.duration' @progressChange='changeProgress'></progress-bar>
         </div>
@@ -50,8 +68,11 @@
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import progressBar from '@/components/Progress-bar/Progress-bar'
 import PlayList from '@/components/Play-list/Play-list'
-import {playMode} from '@/store/config'
-import {randomPlay} from '@/common/js/mixin'
+import { playMode } from '@/store/config'
+import { randomPlay } from '@/common/js/mixin'
+import { getLyric } from '@/common/api/lyric'
+import Lyric from 'lyric-parser'
+import scroll from '@/base/scroll/scroll'
 export default {
   mixins: [randomPlay],
   data () {
@@ -59,12 +80,17 @@ export default {
       canPlay: false,
       currentTime: 0,
       audio: {},
-      percent: 0
+      percent: 0,
+      lyric: {},
+      currentLine: 0,
+      cdShow: true,
+      currentLyric: ''
     }
   },
   components: {
     progressBar,
-    PlayList
+    PlayList,
+    scroll
   },
   computed: {
     ...mapGetters([
@@ -77,7 +103,7 @@ export default {
       'favoriteList'
     ]),
     isFavorite () {
-      let index = this.favoriteList.findIndex((item) => {
+      let index = this.favoriteList.findIndex(item => {
         return item.id === this.currentSong.id
       })
       if (index !== -1) {
@@ -88,7 +114,11 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['savePlayHistory', 'deleteFromFavorite', 'saveFavoriteHistory']),
+    ...mapActions([
+      'savePlayHistory',
+      'deleteFromFavorite',
+      'saveFavoriteHistory'
+    ]),
     minimize () {
       this.SET_FULLSCREEN(false)
     },
@@ -97,6 +127,12 @@ export default {
     },
     togglePlayingState () {
       this.SET_PLAYINGSTATE(!this.playingState)
+      if (this.lyric.togglePlay) {
+        this.lyric.togglePlay()
+      }
+    },
+    test () {
+      this.testShow = !this.testShow
     },
     ready () {
       this.canPlay = true
@@ -110,6 +146,9 @@ export default {
         this.$nextTick(() => {
           this.audio.currentTime = 0
           this.$refs.audio.play()
+          if (this.lyric.seek) {
+            this.lyric.seek(0)
+          }
         })
       } else {
         this.$nextTick(() => {
@@ -137,7 +176,9 @@ export default {
     },
     updateTime (event) {
       this.currentTime = event.target.currentTime
-      this.percent = Math.floor(this.currentTime / this.currentSong.duration * 100)
+      this.percent = Math.floor(
+        this.currentTime / this.currentSong.duration * 100
+      )
       if (!this.audio.currentTime) {
         this.audio = event.target
       }
@@ -147,12 +188,15 @@ export default {
       let time = this.currentSong.duration
       let currentTime = time * (percent / 100)
       this.audio.currentTime = currentTime
+      if (this.lyric.seek) {
+        this.lyric.seek(currentTime * 1000)
+      }
     },
     showPlayList () {
       this.$refs['play-list'].show()
     },
     toggleFavorite (song) {
-      let index = this.favoriteList.findIndex((item) => {
+      let index = this.favoriteList.findIndex(item => {
         return item.id === song.id
       })
       if (index === -1) {
@@ -160,6 +204,22 @@ export default {
       } else {
         this.deleteFromFavorite(song)
       }
+    },
+    toggleShow () {
+      this.cdShow = !this.cdShow
+      if (!this.cdShow) {
+        this.$refs['lyric-scroll'].refresh()
+      }
+    },
+    handleLyric ({ lineNum, txt }) {
+      this.currentLine = lineNum
+      if (this.currentLine > 5) {
+        let el = this.$refs['lyric-line'][lineNum - 5]
+        this.$refs['lyric-scroll'].scrollToElement(el, 1000)
+      } else {
+        this.$refs['lyric-scroll'].scrollToTop(1000)
+      }
+      this.currentLyric = txt
     },
     ...mapMutations({
       SET_FULLSCREEN: 'SET_FULLSCREEN',
@@ -178,6 +238,9 @@ export default {
       })
     },
     currentSong (newsong, oldsong) {
+      if (this.lyric.stop) {
+        this.lyric.stop()
+      }
       this.$nextTick(() => {
         if (newsong.id !== oldsong.id) {
           if (!newsong.id) {
@@ -185,6 +248,16 @@ export default {
           }
           this.$refs.audio.play()
           this.SET_PLAYINGSTATE(true)
+          getLyric(newsong.name)
+            .then(res => {
+              var lyric = res.data.lrc.lyric
+              this.lyric = new Lyric(lyric, this.handleLyric)
+              this.lyric.play()
+            })
+            .catch(() => {
+              this.currentLine = 0
+              this.currentLyric = ''
+            })
         }
       })
     }
@@ -236,34 +309,63 @@ export default {
       text-align: center;
       overflow: hidden;
     }
-    #image-warpper {
+    #rotate-hook {
+      transform: scale(1);
+      #image-warpper {
+        box-sizing: border-box;
+        width: 100%;
+        padding-top: 95%;
+        &.play {
+          animation: rotate 20s infinite linear;
+        }
+        &.stop {
+          animation-play-state: paused;
+        }
+        #song-image {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 75%;
+          width: 75%;
+          border-radius: 50%;
+          border: 8px solid rgba(200, 200, 200, 0.1);
+          transform: translate3d(-50%, -50%, 0) scale(1);
+        }
+      }
+      #mini-lyric {
+        color: #fff;
+        font-size: 16px;
+        line-height: 16px;
+        text-align: center;
+        padding-bottom: 10px;
+      }
+    }
+    #lyric-container {
       box-sizing: border-box;
       width: 100%;
       padding-top: 95%;
-      &.play {
-        animation: rotate 20s infinite linear;
-      }
-      &.stop {
-        animation-play-state: paused;
-      }
-      #rotate-hook {
-        transform: scale(1);
-      }
-      #song-image {
+      overflow: hidden;
+      position: relative;
+      padding-bottom: 26px;
+      #lyric-scroll-warpper {
         position: absolute;
-        left: 50%;
-        top: 50%;
-        width: 75%;
-        width: 75%;
-        border-radius: 50%;
-        border: 8px solid rgba(200, 200, 200, 0.1);
-        transform: translate3d(-50%, -50%, 0) scale(1);
+        top: 0;
+        height: 100%;
+        width: 100%;
+        #lyric-inner {
+          .lyric-line {
+            color: #666;
+            font-size: 14px;
+            line-height: 28px;
+            text-align: center;
+          }
+        }
       }
     }
     #controler-warpper {
       display: flex;
       position: absolute;
-      bottom: 30px;
+      bottom: 10px;
       width: 100%;
       box-sizing: border-box;
       padding: 0 10px;
@@ -280,8 +382,8 @@ export default {
         &.disable {
           color: grey !important;
         }
-        &.active{
-          color:$color-sub-theme;
+        &.active {
+          color: $color-sub-theme;
         }
       }
     }
@@ -296,7 +398,7 @@ export default {
     padding: 5px 0px 5px 0;
     z-index: 200;
     display: flex;
-    #mini-process{
+    #mini-process {
       position: absolute;
       height: 1px;
       background: $color-theme;
@@ -329,8 +431,8 @@ export default {
         margin-bottom: 5px;
         padding-top: 5px;
         overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
       #miniplayer-singername {
         font-size: 12px;
@@ -360,6 +462,9 @@ export default {
       }
     }
   }
+}
+.active {
+  color: #fff !important;
 }
 .normal-enter,
 .normal-leave-to {
@@ -405,6 +510,14 @@ export default {
 }
 .mini-enter-active,
 .mini-leave-active {
+  transition: all 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-active,
+.fade-leave-active {
   transition: all 0.5s;
 }
 @keyframes rotate {

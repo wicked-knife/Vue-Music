@@ -40,6 +40,9 @@ export default {
     scrollToElement (el, time = 0) {
       this.scroll.scrollToElement(el, time)
     },
+    scrollToTop (time = 0) {
+      this.scroll.scrollToElement(0, 0, time)
+    },
     init () {
       this.scroll = new BetterScroll(this.$refs['scroll'], {probeType: this.probeType, click: this.click})
       if (this.listen) {
