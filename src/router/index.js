@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Recommend from '@/components/Recommend/Recommend'
-import Singer from '@/components/Singer/Singer'
-import Rank from '@/components/Rank/Rank'
-import Search from '@/components/Search/Search'
-import SingerDetail from '@/components/singer-detail/singer-detail'
-import RankList from '@/components/RankList/RankList'
-import UserCenter from '@/components/User-Center/User-Center'
+// import Recommend from '@/components/Recommend/Recommend'
+// import Singer from '@/components/Singer/Singer'
+// import Rank from '@/components/Rank/Rank'
+// import Search from '@/components/Search/Search'
+// import SingerDetail from '@/components/singer-detail/singer-detail'
+// import RankList from '@/components/RankList/RankList'
+// import UserCenter from '@/components/User-Center/User-Center'
 
 Vue.use(Router)
 
@@ -17,31 +17,31 @@ export default new Router({
       redirect: '/recommend'
     }, {
       path: '/recommend',
-      component: Recommend
+      component: resolve => require(['@/components/Recommend/Recommend'], resolve)
     }, {
       path: '/singer',
-      component: Singer,
+      component: resolve => require(['@/components/Singer/Singer'], resolve),
       children: [{
         path: ':id',
-        component: SingerDetail
+        component: resolve => require(['@/components/singer-detail/singer-detail'], resolve)
       }]
     }, {
       path: '/rank',
-      component: Rank,
+      component: resolve => require(['@/components/Rank/Rank'], resolve),
       children: [{
         path: ':id',
-        component: RankList
+        component: resolve => require(['@/components/RankList/RankList'], resolve)
       }]
     }, {
       path: '/search',
-      component: Search,
+      component: resolve => require(['@/components/Search/Search'], resolve),
       children: [{
         path: ':id',
-        component: SingerDetail
+        component: resolve => require(['@/components/singer-detail/singer-detail'], resolve)
       }]
     }, {
       path: '/center',
-      component: UserCenter
+      component: resolve => require(['@/components/User-Center/User-Center'], resolve)
     }
   ]
 })

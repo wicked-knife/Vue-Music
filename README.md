@@ -35,6 +35,7 @@
 * [x] VUX
 * [x] JSONP
 * [x] ESlint
+* [x] 路由懒加载
 
 ### 项目目录
 ![](https://ws1.sinaimg.cn/large/e3507465gy1fouve3seowj20ga09qgm6.jpg)
