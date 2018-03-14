@@ -13,5 +13,5 @@ export function getRank () {
     _: 1518333056826
   }
   const CALLBACKNAME = 'jsonpCallback'
-  return jsonp(URL, PARAMS, CALLBACKNAME)
+  return jsonp({url: URL, params: PARAMS, callback: CALLBACKNAME})
 }

@@ -25,5 +25,5 @@ export function search (query, page, zhida) {
     _: 1518421037814
   }
   const CALLBACKNAME = 'jsonpCallback'
-  return jsonp(URL, PARAMS, CALLBACKNAME)
+  return jsonp({url: URL, params: PARAMS, callback: CALLBACKNAME})
 }

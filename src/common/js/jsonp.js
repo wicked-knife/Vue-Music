@@ -1,45 +1,18 @@
-export default function JSONP (url, data, callbackName) {
+export default function JSONP (config) {
   // 使用promise 封装
-  switch (arguments.length) {
-    case 1 :
-      data = {}
-      callbackName = 'callback'
-      break
-    case 2 :
-      if (typeof data === 'object') {
-        callbackName = 'callback'
-      } else if (typeof data === 'string') {
-        callbackName = data
-        data = {}
-      }
-  }
+  let {
+    url,
+    params = {},
+    callback = 'callback'
+  } = config
   return new Promise((resolve, reject) => {
-    jsonp(url, data, callbackName, function (data) {
+    jsonp(url, params, callback, function (data) {
       resolve(data)
     })
   })
 }
 
 function jsonp (url, data, callbackName, callback) {
-  // 未使用promise 封装,也可使用
-  // 判断参数个数,并为参数进行默认赋值 url和callback是必需参数
-  switch (arguments.length) {
-    case 2:
-      callback = data
-      data = {}
-      callbackName = 'callback'
-      break
-    case 3:
-      if (typeof data === 'object') {
-        callback = callbackName
-        callbackName = 'callback'
-      } else if (typeof data === 'string') {
-        callback = callbackName
-        callbackName = data
-        data = {}
-      }
-      break
-  }
   // 为回调函数设置唯一的id
   var functionId = 'jsonp' + Date.now()
   // 创建script标签

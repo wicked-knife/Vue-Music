@@ -18,5 +18,5 @@ export function getSingerList (id) {
     songstatus: 1
   }
   const CALLBACKNAME = 'jsonpCallback'
-  return jsonp(URL, PARAMS, CALLBACKNAME)
+  return jsonp({url: URL, params: PARAMS, callback: CALLBACKNAME})
 }
