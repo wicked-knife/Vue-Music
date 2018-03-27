@@ -338,6 +338,8 @@ export default {
         line-height: 16px;
         text-align: center;
         padding-bottom: 10px;
+        width:100%;
+        @include no-wrap();
       }
     }
     #lyric-container {
@@ -430,6 +432,7 @@ export default {
         color: #fff;
         margin-bottom: 5px;
         padding-top: 5px;
+        width: 80%;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
