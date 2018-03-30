@@ -71,6 +71,7 @@ export default {
       window.open(url, '_blank')
     }
   }
+  // 这里是使用本地服务进行请求代理，以进行请求跨域。仅本地可用。
   // mounted () {
   //   getPCrecommend().then((res) => {
   //   })

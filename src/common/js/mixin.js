@@ -1,7 +1,7 @@
 import {playMode} from '@/store/config'
 import {shuffle} from '@/common/js/utils'
 import {mapGetters, mapMutations, mapActions} from 'vuex'
-// 解决mini播放器在底部遮挡问题
+// 抽象出 解决mini播放器在底部遮挡问题 的逻辑
 export const playlistMixin = {
   computed: {
     ...mapGetters(['playlist'])
@@ -22,8 +22,8 @@ export const playlistMixin = {
     }
   }
 }
-// 抽象出切换播放模式的js逻辑
 
+// 抽象出切换播放模式的js逻辑
 export const randomPlay = {
   computed: {
     ...mapGetters([

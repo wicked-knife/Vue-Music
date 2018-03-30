@@ -23,6 +23,7 @@ export default {
       this.$router.back()
     },
     _getSingerList (id) {
+      // 如果用户在当前页面刷新直接返回歌手页
       if (!this.singer.id) {
         this.$router.push('/singer')
       } else {

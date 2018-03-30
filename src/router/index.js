@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+
 // import Recommend from '@/components/Recommend/Recommend'
 // import Singer from '@/components/Singer/Singer'
 // import Rank from '@/components/Rank/Rank'
@@ -10,6 +11,7 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
+// 路由懒加载的写法
 export default new Router({
   routes: [
     {
