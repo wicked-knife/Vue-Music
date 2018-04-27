@@ -6,11 +6,11 @@
 1.需求分析 → 2.设计图分析 → 3.模块化构思 → 4. 项目目录规划 → 5.静态资源准备 → 6.编码   
 
 ## 在线预览
-[项目演示地址](https://ghostratel.github.io/portfolio/Music/index.html#/recommend)      
+[项目演示地址](https://ghostratel.github.io/portfolio/Music/#/recommend)      
 
 移动端体验更佳     
 
-![二维码](https://ws1.sinaimg.cn/large/e3507465gy1fouvagbgf0j207s07s742.jpg)
+![二维码](http://wx3.sinaimg.cn/mw690/0060lm7Tly1fqr8mbylvij307s07st8h.jpg)
 
 ### 用户界面
 * 歌单推荐页
