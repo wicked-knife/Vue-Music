@@ -66,6 +66,7 @@
 
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex'
+import {getVkey} from '@/common/api/vkey'
 import progressBar from '@/components/Progress-bar/Progress-bar'
 import PlayList from '@/components/Play-list/Play-list'
 import { playMode } from '@/store/config'
@@ -77,20 +78,20 @@ export default {
   mixins: [randomPlay],
   data () {
     return {
-      canPlay: false,
-      currentTime: 0,
-      audio: {},
-      percent: 0,
-      lyric: {},
-      currentLine: 0,
-      cdShow: true,
-      currentLyric: ''
+      canPlay: false, // 当前歌曲是否可播放
+      currentTime: 0, // 当前歌曲时长
+      audio: {}, // 当前歌曲对象
+      percent: 0, // 播放进度百分比
+      lyric: {}, // 歌词对象
+      currentLine: 0, // 当前歌词行数
+      cdShow: true, // 控制播放器cd显隐
+      currentLyric: '' // 当前播放歌词
     }
   },
   components: {
-    progressBar,
-    PlayList,
-    scroll
+    progressBar, // 进度条组件
+    PlayList, // 播放列表组件
+    scroll // 滚动组件
   },
   computed: {
     ...mapGetters([
@@ -102,6 +103,7 @@ export default {
       'mode',
       'favoriteList'
     ]),
+    // 当前歌曲是否是喜欢
     isFavorite () {
       let index = this.favoriteList.findIndex(item => {
         return item.id === this.currentSong.id
@@ -119,12 +121,15 @@ export default {
       'deleteFromFavorite',
       'saveFavoriteHistory'
     ]),
+    // 最小化播放器
     minimize () {
       this.SET_FULLSCREEN(false)
     },
+    // 最大化播放器
     maximize () {
       this.SET_FULLSCREEN(true)
     },
+    // 切换播放状态
     togglePlayingState () {
       this.SET_PLAYINGSTATE(!this.playingState)
       if (this.lyric.togglePlay) {
@@ -134,13 +139,16 @@ export default {
     test () {
       this.testShow = !this.testShow
     },
+    // 歌曲可播放事件处理函数
     ready () {
       this.canPlay = true
       this.savePlayHistory(this.currentSong)
     },
+    // 歌曲错误事件处理函数
     error () {
       this.canPlay = true
     },
+    // 歌曲播放完毕事件处理函数
     end () {
       if (this.mode === playMode.loop) {
         this.$nextTick(() => {
@@ -156,6 +164,7 @@ export default {
         })
       }
     },
+    // 上一首歌曲事件处理函数
     prev () {
       if (this.canPlay) {
         let index = this.currentIndex - 1
@@ -165,6 +174,7 @@ export default {
       }
       this.canPlay = false
     },
+    // 下一首歌曲事件处理函数
     next () {
       if (this.canPlay) {
         let index = this.currentIndex + 1
@@ -174,6 +184,7 @@ export default {
       }
       this.canPlay = false
     },
+    // 歌曲播放时间更新事件处理函数
     updateTime (event) {
       this.currentTime = event.target.currentTime
       this.percent = Math.floor(
@@ -183,6 +194,7 @@ export default {
         this.audio = event.target
       }
     },
+    // 点击进度条更改播放进度事件处理函数
     changeProgress (percent) {
       this.percent = percent
       let time = this.currentSong.duration
@@ -192,9 +204,11 @@ export default {
         this.lyric.seek(currentTime * 1000)
       }
     },
+    // 展示播放列表
     showPlayList () {
       this.$refs['play-list'].show()
     },
+    // 切换当前歌曲是否为喜欢
     toggleFavorite (song) {
       let index = this.favoriteList.findIndex(item => {
         return item.id === song.id
@@ -211,6 +225,7 @@ export default {
         this.$refs['lyric-scroll'].refresh()
       }
     },
+    // 歌词滚动处理函数
     handleLyric ({ lineNum, txt }) {
       this.currentLine = lineNum
       if (this.currentLine > 5) {
@@ -246,6 +261,10 @@ export default {
           if (!newsong.id) {
             return false
           }
+          console.log(newsong)
+          getVkey(newsong).then((res) => {
+            console.log(res)
+          })
           this.$refs.audio.play()
           this.SET_PLAYINGSTATE(true)
           getLyric(newsong.name)

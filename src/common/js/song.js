@@ -1,3 +1,4 @@
+
 class Song {
   constructor (obj) {
     this.album = obj.albumname
@@ -38,7 +39,7 @@ function fixSingerSong (songList) {
     arr.push(obj)
   })
   let list = []
-  arr.forEach(song => {
+  arr.forEach(async song => {
     let obj = new Song(song)
     list.push(obj)
   })
