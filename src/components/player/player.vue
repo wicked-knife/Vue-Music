@@ -66,7 +66,7 @@
 
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex'
-import {getVkey} from '@/common/api/vkey'
+import { getVkey } from '@/common/api/vkey'
 import progressBar from '@/components/Progress-bar/Progress-bar'
 import PlayList from '@/components/Play-list/Play-list'
 import { playMode } from '@/store/config'
@@ -143,6 +143,7 @@ export default {
     ready () {
       this.canPlay = true
       this.savePlayHistory(this.currentSong)
+      this.$refs.audio.play()
     },
     // 歌曲错误事件处理函数
     error () {
@@ -261,12 +262,14 @@ export default {
           if (!newsong.id) {
             return false
           }
-          console.log(newsong)
-          getVkey(newsong).then((res) => {
-            console.log(res)
+          getVkey(newsong).then(res => {
+            const vkey = res.data.items[0].vkey
+            const playSource = `http://dl.stream.qqmusic.qq.com/C400${
+              newsong.mid
+            }.m4a?vkey=${vkey}&guid=9970343703&uin=0&fromtag=66`
+            newsong.url = playSource
+            this.SET_PLAYINGSTATE(true)
           })
-          this.$refs.audio.play()
-          this.SET_PLAYINGSTATE(true)
           getLyric(newsong.name)
             .then(res => {
               var lyric = res.data.lrc.lyric
@@ -357,7 +360,7 @@ export default {
         line-height: 16px;
         text-align: center;
         padding-bottom: 10px;
-        width:100%;
+        width: 100%;
         @include no-wrap();
       }
     }

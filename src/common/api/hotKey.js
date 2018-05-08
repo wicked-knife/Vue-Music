@@ -13,5 +13,5 @@ export function getHotKey () {
     _: 1518414659356
   }
   const CALLBACKNAME = 'jsonpCallback'
-  return jsonp({url: URL, params: PARAMS, callback: CALLBACKNAME})
+  return jsonp({ url: URL, params: PARAMS, callback: CALLBACKNAME })
 }

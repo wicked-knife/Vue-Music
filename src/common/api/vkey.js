@@ -1,11 +1,11 @@
-import jsonp from '../js/jsonp'
+import jsonp from '../js/vkeyJsonp'
 export function getVkey (song) {
   const URL = 'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg'
   const PARAMS = {
     g_tk: 5381,
     loginUin: 0,
     hostUin: 0,
-    format: 'jsonp',
+    format: 'json',
     dataType: 'JSONP',
     inCharset: 'utf8',
     outCharset: 'utf-8',
@@ -16,9 +16,10 @@ export function getVkey (song) {
     uin: 0,
     songmid: song.mid,
     filename: `C400${song.mid}.m4a`,
-    guid: 9970343703
+    guid: 9970343703,
+    callback: 'MusicJsonCallback'
   }
-  const CALLBACKNAME = 'jsonpCallback'
+  const CALLBACKNAME = 'MusicJsonCallback'
   return jsonp({
     url: URL,
     params: PARAMS,

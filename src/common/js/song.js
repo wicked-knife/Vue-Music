@@ -8,7 +8,6 @@ class Song {
     this.mid = obj.songmid
     this.name = obj.songname
     this.singer = obj.singer[0].name
-    this.url = `http://ws.stream.qqmusic.qq.com/C100${obj.songmid}.m4a?fromtag=46`
   }
 }
 export function createSingerSong (songList) {
