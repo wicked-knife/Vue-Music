@@ -407,7 +407,7 @@ export default {
           color: grey !important;
         }
         &.active {
-          color: $color-sub-theme;
+          color: #d93f30 !important;
         }
       }
     }
