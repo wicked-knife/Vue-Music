@@ -17,8 +17,8 @@
         </div>
         <div id="play-list-middle">
           <scroll :data='sequenceList' ref='scroll'>
-            <transition-group tag='ul' name='list'>
-              <li v-for='(song, index) in sequenceList' :key='song.id' v-if='sequenceList.length' class='play-list-item' @click='selectSong(song, index)' ref='play-list-item'>
+            <transition-group tag='ul' name='list' v-if='sequenceList.length'>
+              <li v-for='(song, index) in sequenceList' :key='song.id'  class='play-list-item' @click='selectSong(song, index)' ref='play-list-item'>
                 <div class='item-left'>
                   <i class='iconfont icon-video' :class='{"active": currentSong.id === song.id}'></i>
                   <span>{{song.name}}</span>

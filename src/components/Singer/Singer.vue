@@ -2,11 +2,11 @@
   <div>
     <div id='singer' ref='singer'>
       <scroll ref='scroll' :listen='true' @scroll='scroll'>
-        <ul>
-          <li v-if='fixedSingerlist.length > 0' v-for='(group, index) in fixedSingerlist' :key='index' class='singer-group' ref='scroll-hook'>
+        <ul v-if='fixedSingerlist.length > 0'>
+          <li v-for='(group, index) in fixedSingerlist' :key='index' class='singer-group' ref='scroll-hook'>
             <h3 class='group-name'>{{group.title}}</h3>
-            <ul>
-              <li v-if='group' v-for='(singer, index) in group.items' :key='index' class='singer' @click='selectSinger(singer)'>
+            <ul v-if='group'>
+              <li  v-for='(singer, index) in group.items' :key='index' class='singer' @click='selectSinger(singer)'>
                 <img v-lazy="singer.avatar" class='singer-avatar'>
                 <span class='singer-name'>{{singer.name}}</span>
               </li>
@@ -15,8 +15,8 @@
         </ul>
       </scroll>
       <div id='shortcut-list-warpper' ref='shortcut-hook'>
-        <ul id='shortcut-list'>
-          <li v-for='(char, index) in shortcutList' :key='index' v-if='shortcutList.length' class='shortcut' @click.stop='_clickScrollSinger($event, index)' @touchmove.stop.prevent='_moveScrollSinger($event)' :class="{'active': currentIndex === index}" ref='shortcut'>
+        <ul id='shortcut-list' v-if='shortcutList.length'>
+          <li v-for='(char, index) in shortcutList' :key='index'  class='shortcut' @click.stop='_clickScrollSinger($event, index)' @touchmove.stop.prevent='_moveScrollSinger($event)' :class="{'active': currentIndex === index}" ref='shortcut'>
             {{char}}
           </li>
         </ul>
