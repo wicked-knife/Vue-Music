@@ -6,6 +6,8 @@ import VueLazyload from 'vue-lazyload'
 import store from './store'
 import '@/common/style/index.scss'
 import '@/common/font/iconfont.css'
+import { ToastPlugin } from 'vux'
+Vue.use(ToastPlugin)
 
 Vue.use(VueLazyload, {
   loading: require('./common/image/loading.gif')

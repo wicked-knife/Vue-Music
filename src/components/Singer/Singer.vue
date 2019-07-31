@@ -197,9 +197,12 @@ export default {
       this.shortcutBottom =
         this.$refs['shortcut-hook'].clientHeight +
         this.$refs['shortcut-hook'].offsetTop
-      this.$nextTick(() => {
-        this.$refs.scroll.refresh()
-      })
+      const timerID = setInterval(() => {
+        if (this.$refs.scroll) {
+          clearInterval(timerID)
+          this.$refs.scroll.refresh()
+        }
+      }, 200)
     },
     ...mapMutations({
       setSinger: 'SET_SINGER'

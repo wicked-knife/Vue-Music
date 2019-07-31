@@ -2,7 +2,7 @@
   <div id='player' v-if='playlist.length > 0'>
     <transition name='normal'>
       <div id="normal-player" v-show='fullScreen'>
-        <h3 id='song-name' v-html='currentSong.name' @click='test'></h3>
+        <h3 id='song-name' v-html='currentSong.name' ></h3>
         <h2 id='singer-name' v-html='currentSong.singer'></h2>
         <img :src="currentSong.image" id='bg-blur'>
         <i class='iconfont icon-unfold' @click.stop='minimize'></i>
@@ -32,7 +32,7 @@
         <div id="progress-bar-warpper">
           <progress-bar v-if='currentSong.duration' :currentTime='currentTime' :totalTime='currentSong.duration' @progressChange='changeProgress'></progress-bar>
         </div>
-        <audio :src="currentSong.url" ref='audio' @canplay="ready" @error="error" @timeupdate='updateTime($event)' @ended='end'></audio>
+        <audio :src="resourceLoaded ? currentSong.url : ''" ref='audio' @canplay="ready" @error="error" @timeupdate='updateTime($event)' @ended='end'></audio>
         <div id="controler-warpper">
           <i class="iconfont icon-danquxunhuan" v-show="mode === 1" @click='changeMode'></i>
           <i class="iconfont icon-liebiaoxunhuan" v-show="mode === 0" @click='changeMode'></i>
@@ -85,7 +85,8 @@ export default {
       lyric: {}, // 歌词对象
       currentLine: 0, // 当前歌词行数
       cdShow: true, // 控制播放器cd显隐
-      currentLyric: '' // 当前播放歌词
+      currentLyric: '', // 当前播放歌词
+      resourceLoaded: false
     }
   },
   components: {
@@ -136,14 +137,12 @@ export default {
         this.lyric.togglePlay()
       }
     },
-    test () {
-      this.testShow = !this.testShow
-    },
     // 歌曲可播放事件处理函数
     ready () {
       this.canPlay = true
       this.savePlayHistory(this.currentSong)
       this.$refs.audio.play()
+      this.SET_PLAYINGSTATE(true)
     },
     // 歌曲错误事件处理函数
     error () {
@@ -223,7 +222,7 @@ export default {
     toggleShow () {
       this.cdShow = !this.cdShow
       if (!this.cdShow) {
-        this.$refs['lyric-scroll'].refresh()
+        this.$refs['lyric-scroll'].$slots.default && this.$refs['lyric-scroll'].refresh()
       }
     },
     // 歌词滚动处理函数
@@ -257,6 +256,10 @@ export default {
       if (this.lyric.stop) {
         this.lyric.stop()
       }
+      this.$once('gotSongResource', (resourceURL) => {
+        this.currentSong.url = resourceURL
+        this.resourceLoaded = true
+      })
       this.$nextTick(() => {
         if (newsong.id !== oldsong.id) {
           if (!newsong.id) {
@@ -264,22 +267,27 @@ export default {
           }
           getVkey(newsong).then(res => {
             const vkey = res.data.items[0].vkey
-            const playSource = `http://dl.stream.qqmusic.qq.com/C400${
-              newsong.mid
-            }.m4a?vkey=${vkey}&guid=9970343703&uin=0&fromtag=66`
-            newsong.url = playSource
-            this.SET_PLAYINGSTATE(true)
+            if (vkey) {
+              const playSource = `http://dl.stream.qqmusic.qq.com/C400${
+                newsong.mid
+              }.m4a?vkey=${vkey}&guid=9970343703&uin=0&fromtag=66`
+              this.$emit('gotSongResource', playSource)
+              getLyric(newsong.name)
+                .then(res => {
+                  var lyric = res.data.lrc.lyric
+                  this.lyric = new Lyric(lyric, this.handleLyric)
+                  this.lyric.play()
+                })
+                .catch(() => {
+                  this.currentLine = 0
+                  this.currentLyric = ''
+                })
+            } else {
+              this.$vux.toast.text('已下架', 'top')
+              this.SET_FULLSCREEN(false)
+              this.SET_PLAYINGSTATE(false)
+            }
           })
-          getLyric(newsong.name)
-            .then(res => {
-              var lyric = res.data.lrc.lyric
-              this.lyric = new Lyric(lyric, this.handleLyric)
-              this.lyric.play()
-            })
-            .catch(() => {
-              this.currentLine = 0
-              this.currentLyric = ''
-            })
         }
       })
     }

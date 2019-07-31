@@ -44,23 +44,29 @@ export default {
       this.scroll.scrollToElement(0, 0, time)
     },
     init () {
-      this.scroll = new BetterScroll(this.$refs['scroll'], {probeType: this.probeType, click: this.click})
-      if (this.listen) {
-        let _this = this
-        this.scroll.on('scroll', (positon) => {
-          _this.$emit('scroll', positon)
-        })
-      }
-      if (this.pullup) {
-        this.scroll.on('scrollEnd', () => {
-          if (this.scroll.y <= this.scroll.maxScrollY + 50) {
-            this.$emit('scrollToEnd')
+      const timerID = setInterval(() => {
+        if (this.$slots.default) {
+          clearInterval(timerID)
+          this.scroll = new BetterScroll(this.$refs['scroll'], {probeType: this.probeType, click: this.click})
+
+          if (this.listen) {
+            let _this = this
+            this.scroll.on('scroll', (positon) => {
+              _this.$emit('scroll', positon)
+            })
           }
-        })
-      }
+          if (this.pullup) {
+            this.scroll.on('scrollEnd', () => {
+              if (this.scroll.y <= this.scroll.maxScrollY + 50) {
+                this.$emit('scrollToEnd')
+              }
+            })
+          }
+        }
+      }, 200)
     },
     refresh () {
-      this.scroll.refresh()
+      this.scroll.refresh && this.scroll.refresh()
     }
   },
   watch: {
