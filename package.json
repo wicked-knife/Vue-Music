@@ -2,7 +2,7 @@
   "name": "music-app",
   "version": "1.0.0",
   "description": "a vue music application",
-  "author": "ghostratel <1353640486@qq.com>",
+  "author": "wicked-knife <1353640486@qq.com>",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
